@@ -10,6 +10,10 @@ fun CustomCellView.isCovered(): Boolean {
     return cellState == CustomCellView.CellState.COVERED
 }
 
-fun CustomCellView.isUncovered(): Boolean {
-    return cellState == CustomCellView.CellState.UNCOVERED
+fun CustomCellView.isRevealed(): Boolean {
+    return cellState == CustomCellView.CellState.REVEALED
+}
+
+fun CustomCellView.isFlagged(): Boolean {
+    return cellState == CustomCellView.CellState.FLAGGED
 }

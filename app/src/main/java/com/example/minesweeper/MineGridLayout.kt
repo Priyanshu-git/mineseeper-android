@@ -2,8 +2,9 @@ package com.example.minesweeper
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.GridLayout
-import androidx.core.view.marginLeft
+import android.widget.Toast
 import com.example.minesweeper.ui.CustomCellView
 
 class MineGridLayout(
@@ -12,6 +13,9 @@ class MineGridLayout(
 ) : GridLayout(context, attrs) {
 
     private var gridSize = 0
+    var minesCreated= false
+    val mineCount = 10
+    private val TAG = "MineGridLayout"
 
     fun setGridSize(size: Int) {
         gridSize = size
@@ -43,7 +47,7 @@ class MineGridLayout(
 
     private fun setupClickListener(cellView: CustomCellView, row: Int, col: Int) {
         cellView.setOnClickListener {
-            handleCellClick(cellView, row, col)
+            handleCellClick(row, col)
         }
         cellView.setOnLongClickListener {
             handleCellLongClick(cellView, row, col)
@@ -51,40 +55,71 @@ class MineGridLayout(
         }
     }
 
-    private fun handleCellClick(cellView: CustomCellView, row: Int, col: Int) {
-        uncoverMines(row, col)
-    }
+    private fun handleCellClick(row: Int, col: Int) {
+        if (!minesCreated) {
+            setupMines(row, col)
+            minesCreated = true
+        }
 
-    private fun uncoverMines(row: Int, col: Int) {
-        if (row < 0 || row >= gridSize || col < 0 || col >= gridSize || cell(row, col).isUncovered())
+        val clickedCell = cell(row, col)
+
+        if (clickedCell.isFlagged()) return
+
+        if (clickedCell.isMine()) {
+            revealAllMines()
+            Toast.makeText(context, "Game Over", Toast.LENGTH_SHORT).show()
             return
-        setCellCount(row, col)
-        setCellCount(row-1, col)
-        setCellCount(row+1, col)
-        setCellCount(row, col+1)
-        setCellCount(row, col-1)
-        setCellCount(row+1, col+1)
-        setCellCount(row+1, col-1)
-        setCellCount(row-1, col+1)
-        setCellCount(row-1, col-1)
+        }
+
+        uncoverCells(row, col)
     }
 
-    private fun setCellCount(row: Int, col: Int) {
+    private fun uncoverCells(row: Int, col: Int) {
+        if (row !in 0 until gridSize || col !in 0 until gridSize) return
+
+        val currentCell = cell(row, col)
+        if (!currentCell.isCovered()) return
+
+        val mineCount = countAdjacentMines(row, col)
+        currentCell.adjacentMines = mineCount
+
+        if (mineCount == 0) {
+            for (dx in -1..1) {
+                for (dy in -1..1) {
+                    if (dx == 0 && dy == 0) continue
+                    uncoverCells(row + dx, col + dy)
+                }
+            }
+        }
+    }
+
+    private fun countAdjacentMines(row: Int, col: Int): Int {
         var count = 0
-        if (row>0 && cell(row-1, col).isMine()) { count++
-            if (col>0 && cell(row-1, col-1).isMine()) count++
-            if (col<gridSize-1 && cell(row-1, col+1).isMine()) count++
+        for (dx in -1..1) {
+            for (dy in -1..1) {
+                if (dx == 0 && dy == 0) continue // Skip self
+                val newRow = row + dx
+                val newCol = col + dy
+                if (newRow in 0 until gridSize && newCol in 0 until gridSize
+                    && cell(newRow, newCol).isMine()) {
+                    count++
+                }
+            }
         }
-        if (row<gridSize-1 && cell(row+1, col).isMine()) { count++
-            if (col>0 && cell(row+1, col-1).isMine()) count++
-            if (col<gridSize-1 && cell(row+1, col+1).isMine()) count++
-        }
-
-        if (col>0 && cell(row, col-1).isMine()) count++
-        if (col<gridSize-1 && cell(row, col+1).isMine()) count++
-
-        cell(row, col).adjacentMines = count
+        return count
     }
+
+    private fun revealAllMines() {
+        for (i in 0 until gridSize) {
+            for (j in 0 until gridSize) {
+                val currentCell = cell(i, j)
+                if (currentCell.isMine()) {
+                    currentCell.revealMine()
+                }
+            }
+        }
+    }
+
 
     private fun cell(i: Int, j: Int): CustomCellView {
         return getChildAt((i * columnCount) + j) as CustomCellView
@@ -92,6 +127,20 @@ class MineGridLayout(
 
     private fun handleCellLongClick(cellView: CustomCellView, row: Int, col: Int) {
         cellView.toggleFlag()
+    }
+
+    private fun setupMines(row: Int, col:Int) {
+        val mines = mutableSetOf<Pair<Int, Int>>()
+        val random = java.util.Random()
+
+        while (mines.size < mineCount) {
+            val i = random.nextInt(gridSize)
+            val j = random.nextInt(gridSize)
+            if (i != row && j != col)
+                mines.add(i to j)
+        }
+        Log.i(TAG, "setupMines ${mines}")
+        setMines(mines)
     }
 
     fun setMines(mines: MutableSet<Pair<Int, Int>>) {

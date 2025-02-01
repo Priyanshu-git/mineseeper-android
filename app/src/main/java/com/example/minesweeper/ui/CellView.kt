@@ -4,12 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
 import com.example.minesweeper.R
 
@@ -20,11 +15,16 @@ class CustomCellView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     enum class CellState {
-        COVERED, UNCOVERED, FLAGGED, MINE
+        COVERED, REVEALED, FLAGGED
     }
 
     var cellState: CellState = CellState.COVERED
-    var adjacentMines: Int = 0 // Number of adjacent mines, used when the cell is uncovered.
+    var adjacentMines: Int = 0
+        set(value) {
+            field = value
+            cellState = CellState.REVEALED
+            invalidate()
+        }
     var isMine = false
 
     private val coveredImage: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.tile_covered)
@@ -42,30 +42,6 @@ class CustomCellView @JvmOverloads constructor(
         8 to BitmapFactory.decodeResource(resources, R.drawable.tile_8)
     )
 
-    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            if (cellState == CellState.COVERED) {
-                uncoverCell() // Custom logic to uncover the cell
-                performClick() // Handle accessibility
-                return true
-            }
-            return false
-        }
-
-        override fun onLongPress(e: MotionEvent) {
-            if (cellState == CellState.COVERED) {
-                toggleFlag() // Custom logic to flag the cell
-            }
-        }
-    })
-
-    init {
-        setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            true
-        }
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val cellSize = width.coerceAtMost(height).toFloat()
@@ -73,14 +49,14 @@ class CustomCellView @JvmOverloads constructor(
             CellState.COVERED -> {
                 drawBitmap(canvas, coveredImage, cellSize)
             }
-            CellState.UNCOVERED -> {
-                drawBitmap(canvas, tileMap[adjacentMines]!!, cellSize)
+            CellState.REVEALED -> {
+                if (isMine)
+                    drawBitmap(canvas, mineImage, cellSize)
+                else
+                    drawBitmap(canvas, tileMap[adjacentMines]!!, cellSize)
             }
             CellState.FLAGGED -> {
                 drawBitmap(canvas, flaggedImage, cellSize)
-            }
-            CellState.MINE -> {
-                drawBitmap(canvas, mineImage, cellSize)
             }
         }
     }
@@ -96,15 +72,12 @@ class CustomCellView @JvmOverloads constructor(
         invalidate()
     }
 
-    // Optional: method to uncover the cell
-    fun uncoverCell() {
-        if (cellState == CellState.COVERED) {
-            cellState = CellState.UNCOVERED
-            invalidate()
-        }
-    }
-
     fun plantMine() {
         isMine = true
+    }
+
+    fun revealMine() {
+        cellState = CellState.REVEALED
+        invalidate()
     }
 }
