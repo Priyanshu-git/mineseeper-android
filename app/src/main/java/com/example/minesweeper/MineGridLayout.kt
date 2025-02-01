@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.widget.GridLayout
 import android.widget.Toast
+import com.example.minesweeper.data.SharedPrefs
 import com.example.minesweeper.ui.CustomCellView
 
 class MineGridLayout(
@@ -13,8 +14,9 @@ class MineGridLayout(
 ) : GridLayout(context, attrs) {
 
     private var gridSize = 0
+    private val sharedPref = SharedPrefs.getInstance()
     var minesCreated= false
-    val mineCount = 10
+    val mineCount = sharedPref.mineCount
     private val TAG = "MineGridLayout"
 
     fun setGridSize(size: Int) {
