@@ -7,6 +7,7 @@ import android.widget.GridLayout
 import android.widget.Toast
 import com.example.minesweeper.data.SharedPrefs
 import com.example.minesweeper.ui.CustomCellView
+import com.example.minesweeper.viewmodel.MSViewModel
 
 class MineGridLayout(
     context: Context,
@@ -17,6 +18,7 @@ class MineGridLayout(
     private val sharedPref = SharedPrefs.getInstance()
     var minesCreated= false
     val mineCount = sharedPref.mineCount
+    private var viewModel : MSViewModel? = null
     private val TAG = "MineGridLayout"
 
     fun setGridSize(size: Int) {
@@ -128,12 +130,15 @@ class MineGridLayout(
     }
 
     private fun handleCellLongClick(cellView: CustomCellView, row: Int, col: Int) {
-        if (!cellView.isRevealed())
+        if (!cellView.isRevealed()) {
+            if (!cellView.isFlagged() && sharedPref.mineCount <= viewModel!!.flags.value.size) return
+            viewModel?.updateFlag(row, col)
             cellView.toggleFlag()
+        }
     }
 
     private fun setupMines(row: Int, col:Int) {
-        val mines = mutableSetOf<Pair<Int, Int>>()
+        val mines = mutableListOf<Pair<Int, Int>>()
         val random = java.util.Random()
 
         while (mines.size < mineCount) {
@@ -146,6 +151,7 @@ class MineGridLayout(
         mines.forEach{
             cell(it.first, it.second).plantMine()
         }
+        viewModel?.setMines(mines)
     }
 
     fun reset() {
@@ -155,5 +161,9 @@ class MineGridLayout(
             }
         }
         minesCreated = false
+    }
+
+    fun setViewModel(viewModel: MSViewModel) {
+        this.viewModel = viewModel
     }
 }
