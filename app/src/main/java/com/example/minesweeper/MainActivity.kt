@@ -28,5 +28,8 @@ class MainActivity : AppCompatActivity() {
         customGridLayout = binding.mineGrid.apply {
             setGridSize(sharedPref.gridSize)
         }
+        binding.btnReset.setOnClickListener {
+            customGridLayout.reset()
+        }
     }
 }

@@ -128,7 +128,8 @@ class MineGridLayout(
     }
 
     private fun handleCellLongClick(cellView: CustomCellView, row: Int, col: Int) {
-        cellView.toggleFlag()
+        if (!cellView.isRevealed())
+            cellView.toggleFlag()
     }
 
     private fun setupMines(row: Int, col:Int) {
@@ -145,5 +146,14 @@ class MineGridLayout(
         mines.forEach{
             cell(it.first, it.second).plantMine()
         }
+    }
+
+    fun reset() {
+        for (i in 0 until gridSize) {
+            for (j in 0 until gridSize) {
+                cell(i, j).reset()
+            }
+        }
+        minesCreated = false
     }
 }

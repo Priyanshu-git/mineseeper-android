@@ -80,4 +80,10 @@ class CustomCellView @JvmOverloads constructor(
         cellState = CellState.REVEALED
         invalidate()
     }
+
+    fun reset() {
+        cellState = CellState.COVERED
+        isMine = false
+        invalidate()
+    }
 }
