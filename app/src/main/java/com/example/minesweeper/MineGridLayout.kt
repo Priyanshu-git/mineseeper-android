@@ -142,10 +142,6 @@ class MineGridLayout(
                 mines.add(i to j)
         }
         Log.i(TAG, "setupMines ${mines}")
-        setMines(mines)
-    }
-
-    fun setMines(mines: MutableSet<Pair<Int, Int>>) {
         mines.forEach{
             cell(it.first, it.second).plantMine()
         }

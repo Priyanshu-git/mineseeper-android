@@ -3,7 +3,7 @@ package com.example.minesweeper.data
 import android.content.Context
 import android.content.SharedPreferences
 
-class SharedPrefs() {
+class SharedPrefs {
     var mContext:Context? = null
 
     companion object {
@@ -19,8 +19,11 @@ class SharedPrefs() {
         }
     }
 
-    private val prefs= mContext!!.getSharedPreferences("MinesweeperPrefs", Context.MODE_PRIVATE)
-    private val editor: SharedPreferences.Editor = prefs.edit()
+    private val prefs
+        get() = mContext!!.getSharedPreferences("GAME_DATA", Context.MODE_PRIVATE)
+
+    private val editor: SharedPreferences.Editor
+        get() = prefs.edit()
 
     fun setContext(context: Context){
         this.mContext = context
