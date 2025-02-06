@@ -1,4 +1,4 @@
-package com.example.minesweeper.data
+package com.nexxlab.minesweeper.data
 
 import android.content.Context
 import android.content.SharedPreferences

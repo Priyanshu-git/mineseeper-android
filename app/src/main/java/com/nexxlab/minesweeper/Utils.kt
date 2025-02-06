@@ -1,6 +1,6 @@
-package com.example.minesweeper
+package com.nexxlab.minesweeper
 
-import com.example.minesweeper.ui.CustomCellView
+import com.nexxlab.minesweeper.ui.CustomCellView
 
 fun CustomCellView.isMine(): Boolean {
     return isMine

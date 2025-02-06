@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.minesweeper'
+    namespace 'com.nexxlab.minesweeper'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.example.minesweeper"
+        applicationId "com.nexxlab.minesweeper"
         minSdk 24
         targetSdk 35
         versionCode 1

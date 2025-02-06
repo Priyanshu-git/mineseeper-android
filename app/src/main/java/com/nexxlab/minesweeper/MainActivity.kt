@@ -1,4 +1,4 @@
-package com.example.minesweeper
+package com.nexxlab.minesweeper
 
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.minesweeper.data.SharedPrefs
-import com.example.minesweeper.databinding.ActivityMainBinding
-import com.example.minesweeper.viewmodel.MSViewModel
+import com.nexxlab.minesweeper.R
+import com.nexxlab.minesweeper.data.SharedPrefs
+import com.nexxlab.minesweeper.databinding.ActivityMainBinding
+import com.nexxlab.minesweeper.viewmodel.MSViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {

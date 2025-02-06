@@ -1,13 +1,13 @@
-package com.example.minesweeper
+package com.nexxlab.minesweeper
 
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.GridLayout
 import android.widget.Toast
-import com.example.minesweeper.data.SharedPrefs
-import com.example.minesweeper.ui.CustomCellView
-import com.example.minesweeper.viewmodel.MSViewModel
+import com.nexxlab.minesweeper.data.SharedPrefs
+import com.nexxlab.minesweeper.ui.CustomCellView
+import com.nexxlab.minesweeper.viewmodel.MSViewModel
 
 class MineGridLayout(
     context: Context,

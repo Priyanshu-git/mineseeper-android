@@ -1,4 +1,4 @@
-package com.example.minesweeper.ui
+package com.nexxlab.minesweeper.ui
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import com.example.minesweeper.R
+import com.nexxlab.minesweeper.R
 
 class CustomCellView @JvmOverloads constructor(
     context: Context,

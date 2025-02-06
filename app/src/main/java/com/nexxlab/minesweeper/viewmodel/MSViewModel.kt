@@ -1,7 +1,7 @@
-package com.example.minesweeper.viewmodel
+package com.nexxlab.minesweeper.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.minesweeper.data.SharedPrefs
+import com.nexxlab.minesweeper.data.SharedPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
