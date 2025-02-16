@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Minesweeper</string>
+    <string name="settings_tile_count">Grid Size</string>
+    <string name="settings_mine_count">No of Mines</string>
 </resources>

@@ -1,14 +1,15 @@
 package com.nexxlab.minesweeper
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.GridLayout
 import android.widget.Toast
+import com.nexxlab.minesweeper.data.Constants
 import com.nexxlab.minesweeper.data.SharedPrefs
 import com.nexxlab.minesweeper.ui.CustomCellView
 import com.nexxlab.minesweeper.viewmodel.MSViewModel
-
 class MineGridLayout(
     context: Context,
     attrs: AttributeSet? = null
@@ -16,12 +17,28 @@ class MineGridLayout(
 
     private var gridSize = 0
     private val sharedPref = SharedPrefs.getInstance()
-    var minesCreated= false
-    val mineCount = sharedPref.mineCount
+    private var minesCreated= false
+    private var mineCount = sharedPref.mineCount
     private var viewModel : MSViewModel? = null
     private val TAG = "MineGridLayout"
 
+    private val tileMap = mapOf(
+        0 to BitmapFactory.decodeResource(resources, R.drawable.tile_0),
+        1 to BitmapFactory.decodeResource(resources, R.drawable.tile_1),
+        2 to BitmapFactory.decodeResource(resources, R.drawable.tile_2),
+        3 to BitmapFactory.decodeResource(resources, R.drawable.tile_3),
+        4 to BitmapFactory.decodeResource(resources, R.drawable.tile_4),
+        5 to BitmapFactory.decodeResource(resources, R.drawable.tile_5),
+        6 to BitmapFactory.decodeResource(resources, R.drawable.tile_6),
+        7 to BitmapFactory.decodeResource(resources, R.drawable.tile_7),
+        8 to BitmapFactory.decodeResource(resources, R.drawable.tile_8),
+        Constants.INDEX_BOMB to BitmapFactory.decodeResource(resources, R.drawable.tile_bomb),
+        Constants.INDEX_COVERED to BitmapFactory.decodeResource(resources, R.drawable.tile_covered),
+        Constants.INDEX_FLAGGED to BitmapFactory.decodeResource(resources, R.drawable.tile_flagged)
+    )
+
     fun setGridSize(size: Int) {
+        removeAllViews()
         gridSize = size
         rowCount = size
         columnCount = size
@@ -30,12 +47,11 @@ class MineGridLayout(
     }
 
     private fun createGrid() {
-        removeAllViews()
         val screenWidth = resources.displayMetrics.widthPixels
         val cellWidth = screenWidth / gridSize
         for (row in 0 until gridSize) {
             for (col in 0 until gridSize) {
-                val cellView = CustomCellView(context).apply {
+                val cellView = CustomCellView(context, tileMap = tileMap).apply {
                     layoutParams = LayoutParams().apply {
                         width = cellWidth
                         height = cellWidth
@@ -138,7 +154,7 @@ class MineGridLayout(
     }
 
     private fun setupMines(row: Int, col:Int) {
-        val mines = mutableListOf<Pair<Int, Int>>()
+        val mines = mutableSetOf<Pair<Int, Int>>()
         val random = java.util.Random()
 
         while (mines.size < mineCount) {
@@ -151,10 +167,13 @@ class MineGridLayout(
         mines.forEach{
             cell(it.first, it.second).plantMine()
         }
-        viewModel?.setMines(mines)
+        viewModel?.setMines(mines.toMutableList())
     }
 
     fun reset() {
+        gridSize = sharedPref.gridSize
+        mineCount = sharedPref.mineCount
+
         for (i in 0 until gridSize) {
             for (j in 0 until gridSize) {
                 cell(i, j).reset()
@@ -163,7 +182,15 @@ class MineGridLayout(
         minesCreated = false
     }
 
+    fun hardReset(){
+        gridSize = sharedPref.gridSize
+        mineCount = sharedPref.mineCount
+        setGridSize(gridSize)
+        minesCreated = false
+    }
+
     fun setViewModel(viewModel: MSViewModel) {
         this.viewModel = viewModel
     }
 }
+

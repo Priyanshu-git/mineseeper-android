@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class SharedPrefs {
-    var mContext:Context? = null
+    private var mContext:Context? = null
 
     companion object {
         private const val GRID_SIZE_KEY = "grid_size"
@@ -19,11 +19,9 @@ class SharedPrefs {
         }
     }
 
-    private val prefs
-        get() = mContext!!.getSharedPreferences("GAME_DATA", Context.MODE_PRIVATE)
+    private val prefs by lazy { mContext!!.getSharedPreferences("GAME_DATA", Context.MODE_PRIVATE) }
 
-    private val editor: SharedPreferences.Editor
-        get() = prefs.edit()
+    private val editor by lazy { prefs.edit() }
 
     fun setContext(context: Context){
         this.mContext = context

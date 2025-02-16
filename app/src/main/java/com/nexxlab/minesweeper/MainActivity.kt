@@ -1,6 +1,7 @@
 package com.nexxlab.minesweeper
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -42,8 +43,27 @@ class MainActivity : AppCompatActivity() {
             customGridLayout.reset()
             viewModel.reset()
         }
+        binding.imgSettings.setOnClickListener{
+            openSettingsDialog()
+        }
 
         setupObservers()
+    }
+
+    private fun openSettingsDialog() {
+        val dialog = SettingsDialog(object : DialogCallback{
+            override fun onDialogDismiss(gridSizeChanged: Boolean, minesChanged: Boolean) {
+                if (gridSizeChanged) {
+                    Handler().post { customGridLayout.hardReset() }
+                    viewModel.reset()
+                }else if (minesChanged) {
+                    Handler().post { customGridLayout.reset() }
+                    viewModel.reset()
+                    binding.tvFlagCount.text = sharedPref.mineCount.toString()
+                }
+            }
+        })
+        dialog.show(supportFragmentManager, "settings_dialog")
     }
 
     private fun setupObservers() {
