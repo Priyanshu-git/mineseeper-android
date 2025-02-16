@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.nexxlab.minesweeper.R
 import com.nexxlab.minesweeper.data.SharedPrefs
 import com.nexxlab.minesweeper.databinding.ActivityMainBinding
 import com.nexxlab.minesweeper.viewmodel.MSViewModel
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
         customGridLayout = binding.mineGrid.apply {
             setGridSize(sharedPref.gridSize)
-            setViewModel(viewModel!!)
+            setViewModel(viewModel)
         }
         binding.btnReset.setOnClickListener {
             customGridLayout.reset()
